@@ -1429,6 +1429,8 @@ static int vop_crtc_mode_set(struct drm_crtc *crtc,
 
 	switch (vop->connector_type) {
 	case DRM_MODE_CONNECTOR_LVDS:
+	case DRM_MODE_CONNECTOR_VGA:
+	case DRM_MODE_CONNECTOR_TV:
 		VOP_CTRL_SET(vop, rgb_en, 1);
 		break;
 	case DRM_MODE_CONNECTOR_eDP:
