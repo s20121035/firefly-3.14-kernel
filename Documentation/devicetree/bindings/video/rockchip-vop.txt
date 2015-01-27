@@ -32,6 +32,11 @@ Required properties:
 - port: A port node with endpoint definitions as defined in
   Documentation/devicetree/bindings/media/video-interfaces.txt.
 
+Optional properties in encoder nodes:
+- rockchip,rgb-bridge: if a separate controller is regulating access
+		to the rgb output interface it should be referenced
+		in the encoder node.
+
 Example:
 SoC specific DT entry:
 	vopb: vopb@ff930000 {
@@ -55,4 +60,15 @@ SoC specific DT entry:
 				remote-endpoint=<&hdmi_in_vopb>;
 			};
 		};
+	};
+
+Additional entries when a rgb-bridge is used:
+
+	lvds: lvds@ff96c000 {
+		...
+	};
+
+	external-encoder {
+		...
+		rockchip,rgb-bridge = <&lvds>;
 	};

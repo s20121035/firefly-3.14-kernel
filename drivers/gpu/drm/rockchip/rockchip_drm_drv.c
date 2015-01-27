@@ -72,6 +72,7 @@ static int rockchip_drm_load(struct drm_device *drm_dev, unsigned long flags)
 	struct dma_iommu_mapping *mapping;
 	struct device *dev = drm_dev->dev;
 	struct drm_connector *connector;
+	struct drm_encoder *encoder;
 	int ret;
 
 	private = devm_kzalloc(drm_dev->dev, sizeof(*private), GFP_KERNEL);
@@ -118,6 +119,37 @@ static int rockchip_drm_load(struct drm_device *drm_dev, unsigned long flags)
 	ret = component_bind_all(dev, drm_dev);
 	if (ret)
 		goto err_detach_device;
+
+	/*
+	 * Attach rgb bridge to encoders needing it.
+	 */
+	list_for_each_entry(encoder, &drm_dev->mode_config.encoder_list, head) {
+		struct device_node *rgb_node;
+
+		if (!encoder->of_node)
+			continue;
+
+		rgb_node = of_parse_phandle(encoder->of_node,
+					    "rockchip,rgb-bridge", 0);
+		if (rgb_node) {
+			struct drm_bridge *bridge;
+
+			bridge = of_drm_find_bridge(rgb_node);
+			of_node_put(rgb_node);
+			if (!bridge) {
+				ret = -EPROBE_DEFER;
+				goto err_unbind;
+			}
+
+			encoder->bridge = bridge;
+			bridge->encoder = encoder;
+			ret = drm_bridge_attach(encoder->dev, bridge);
+			if (ret) {
+				DRM_ERROR("Failed to attach bridge to drm\n");
+				goto err_unbind;
+			}
+		}
+	}
 
 	/*
 	 * All components are now added, we can publish the connector sysfs
