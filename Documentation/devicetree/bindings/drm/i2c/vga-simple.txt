@@ -1,0 +1,18 @@
+Device-Tree bindings for generic vga encoders
+
+Required properties;
+  - compatible: must be "adi,adv7123"
+
+Optional properties:
+  - ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
+  - enable-gpio: GPIO pin to enable or disable the encoder
+  - vaa-supply: regulator for the analog power supply
+
+Example:
+
+	adv7123: vga-encoder {
+		compatible = "adi,adv7123";
+		ddc-i2c-bus = <&i2c4>;
+		vaa-supply = <&vcc_io>;
+		enable-gpio = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+	};
