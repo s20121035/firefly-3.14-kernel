@@ -85,6 +85,7 @@ GSYMS
 GTAGS
 
 *.orig
+*.img
 *~
 \#*#
 
