@@ -70,6 +70,18 @@ config REGULATOR_88PM8607
 	help
 	  This driver supports 88PM8607 voltage regulator chips.
 
+config REGULATOR_ACT8846
+	tristate "Active Semi ACT8846 PMIC regulators"
+	depends on I2C
+	help
+	  Support the voltage and current regulators of the ACT8846 series of PMIC devices.
+
+config ACT8846_SUPPORT_RESET
+	tristate "ACT8846 PMIC SUPPORT RESET"
+	depends on REGULATOR_ACT8846=y
+	help
+	  Support short press key to restart.
+
 config REGULATOR_ACT8865
 	tristate "Active-semi act8865 voltage regulator"
 	depends on I2C
@@ -467,6 +479,12 @@ config REGULATOR_S5M8767
 	 This driver supports a Samsung S5M8767A voltage output regulator
 	 via I2C bus. S5M8767A have 9 Bucks and 28 LDOs output and
 	 supports DVS mode with 8bits of output voltage control.
+
+config REGULATOR_SYR82X
+	tristate "SYR82X DCDC SUPPORT REGULATOR"
+	depends on I2C
+	help
+	  Support the voltage and current regulators of the SYR82X series of DCDC devices.
 
 config REGULATOR_TI_ABB
 	tristate "TI Adaptive Body Bias on-chip LDO"
