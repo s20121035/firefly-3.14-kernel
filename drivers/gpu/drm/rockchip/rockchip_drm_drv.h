@@ -23,6 +23,8 @@
 #include <linux/module.h>
 #include <linux/component.h>
 
+#include <linux/ump.h>
+
 #define ROCKCHIP_MAX_FB_BUFFER	3
 #define ROCKCHIP_MAX_CONNECTOR	2
 #define ROCKCHIP_MAX_CRTC	2
@@ -54,6 +56,8 @@ struct rockchip_drm_private {
 	unsigned int cpu_fence_context;
 	atomic_t cpu_fence_seqno;
 #endif
+    ump_dd_handle ump_wrapped_buffer;
+    ump_dd_physical_block ump_memory_description;
 };
 
 int rockchip_drm_encoder_get_mux_id(struct device_node *node,

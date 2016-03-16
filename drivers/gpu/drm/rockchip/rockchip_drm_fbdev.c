@@ -16,6 +16,7 @@
 #include <drm/drmP.h>
 #include <drm/drm_fb_helper.h>
 #include <drm/drm_crtc_helper.h>
+//#include <linux/ump.h>
 
 #include "rockchip_drm_drv.h"
 #include "rockchip_drm_gem.h"
@@ -24,6 +25,9 @@
 #define PREFERRED_BPP		32
 #define to_drm_private(x) \
 		container_of(x, struct rockchip_drm_private, fbdev_helper)
+
+//struct ump_dd_handle ump_wrapped_buffer;
+//struct ump_dd_physical_block ump_memory_description;
 
 static int rockchip_fbdev_mmap(struct fb_info *info,
 			       struct vm_area_struct *vma)
@@ -34,18 +38,48 @@ static int rockchip_fbdev_mmap(struct fb_info *info,
 	return rockchip_gem_mmap_buf(private->fbdev_bo, vma);
 }
 
+
+static int drm_fb_ioctl(struct fb_info *info, unsigned int cmd,
+		       unsigned long arg)
+{
+	//struct fb_fix_screeninfo *fix = &info->fix;
+    switch (cmd) 
+    {
+        case GET_UMP_SECURE_ID:
+        case GET_UMP_SECURE_ID_1:
+        case GET_UMP_SECURE_ID_2:
+        case GET_UMP_SECURE_ID_3:
+            printk("drm fb ioctl %d \n",cmd);
+            struct drm_fb_helper *helper = info->par;
+            struct rockchip_drm_private *private = to_drm_private(helper);
+            u32 __user *psecureid = (u32 __user *) arg;
+            ump_secure_id secure_id;
+
+            secure_id = ump_dd_secure_id_get( private->ump_wrapped_buffer );
+            put_user( (unsigned int)secure_id, psecureid );
+            break;
+        default:
+            break;
+    }
+}
+
+
 static struct fb_ops rockchip_drm_fbdev_ops = {
 	.owner		= THIS_MODULE,
 	.fb_mmap	= rockchip_fbdev_mmap,
 	.fb_fillrect	= cfb_fillrect,
 	.fb_copyarea	= cfb_copyarea,
 	.fb_imageblit	= cfb_imageblit,
+    .fb_ioctl       = drm_fb_ioctl,
+    .fb_compat_ioctl = drm_fb_ioctl,
 	.fb_check_var	= drm_fb_helper_check_var,
 	.fb_set_par	= drm_fb_helper_set_par,
 	.fb_blank	= drm_fb_helper_blank,
 	.fb_pan_display	= drm_fb_helper_pan_display,
 	.fb_setcmap	= drm_fb_helper_setcmap,
 };
+
+
 
 static int rockchip_drm_fbdev_create(struct drm_fb_helper *helper,
 				     struct drm_fb_helper_surface_size *sizes)
@@ -115,6 +149,13 @@ static int rockchip_drm_fbdev_create(struct drm_fb_helper *helper,
 	fbi->screen_base = rk_obj->kvaddr + offset;
 	fbi->screen_size = rk_obj->base.size;
 	fbi->fix.smem_len = rk_obj->base.size;
+
+
+    private->ump_memory_description.addr = fbi->screen_base;
+    private->ump_memory_description.size = fbi->screen_size;
+    private->ump_wrapped_buffer = ump_dd_handle_create_from_phys_blocks(
+                      &private->ump_memory_description, 1);
+
 
 	DRM_DEBUG_KMS("FB [%dx%d]-%d kvaddr=%p offset=%ld size=%d\n",
 		      fb->width, fb->height, fb->depth, rk_obj->kvaddr,

@@ -17,7 +17,8 @@
 
 
 
-/*
+/**
+ * @file mali_kbase_pm_demand.c
  * A simple demand based power management policy
  */
 
@@ -36,8 +37,7 @@ static u64 demand_get_core_mask(struct kbase_device *kbdev)
 
 static bool demand_get_core_active(struct kbase_device *kbdev)
 {
-	if (0 == kbdev->pm.active_count && !(kbdev->shader_needed_bitmap |
-			kbdev->shader_inuse_bitmap))
+	if (0 == kbdev->pm.active_count)
 		return false;
 
 	return true;
@@ -53,8 +53,8 @@ static void demand_term(struct kbase_device *kbdev)
 	CSTD_UNUSED(kbdev);
 }
 
-/*
- * The struct kbase_pm_policy structure for the demand power policy.
+/**
+ * The @ref struct kbase_pm_policy structure for the demand power policy.
  *
  * This is the static structure that defines the demand power policy's callback
  * and name.

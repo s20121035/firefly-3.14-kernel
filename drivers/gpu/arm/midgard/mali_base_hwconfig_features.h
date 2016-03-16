@@ -1,4 +1,5 @@
 /*
+ *
  * (C) COPYRIGHT 2015 ARM Limited. All rights reserved.
  *
  * This program is free software and is provided to you under the terms of the
@@ -9,7 +10,10 @@
  * A copy of the licence is included with the program, and can also be obtained
  * from Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301, USA.
+ *
  */
+
+
 
 /* AUTOMATICALLY GENERATED FILE. If you want to amend the issues/features,
  * please update base/tools/hwconfig_generator/hwc_{issues,features}.py
@@ -41,6 +45,7 @@ enum base_hw_feature {
 	BASE_HW_FEATURE_NEXT_INSTRUCTION_TYPE,
 	BASE_HW_FEATURE_BRNDOUT_KILL,
 	BASE_HW_FEATURE_WARPING,
+	BASE_HW_FEATURE_FLUSH_REDUCTION,
 	BASE_HW_FEATURE_V4,
 	BASE_HW_FEATURE_END
 };

@@ -17,7 +17,8 @@
 
 
 
-/*
+/**
+ * @file mali_kbase_js_affinity.c
  * Base kernel affinity manager APIs
  */
 
@@ -122,8 +123,7 @@ bool kbase_js_choose_affinity(u64 * const affinity,
 
 	if (1 == kbdev->gpu_props.num_cores) {
 		/* trivial case only one core, nothing to do */
-		*affinity = core_availability_mask &
-				kbdev->pm.debug_core_mask[js];
+		*affinity = core_availability_mask;
 	} else {
 		if ((core_req & (BASE_JD_REQ_COHERENT_GROUP |
 					BASE_JD_REQ_SPECIFIC_COHERENT_GROUP))) {
@@ -132,8 +132,7 @@ bool kbase_js_choose_affinity(u64 * const affinity,
 				 * the first core group */
 				*affinity =
 				kbdev->gpu_props.props.coherency_info.group[0].core_mask
-						& core_availability_mask &
-						kbdev->pm.debug_core_mask[js];
+						& core_availability_mask;
 			} else {
 				/* js[1], js[2] use core groups 0, 1 for
 				 * dual-core-group systems */
@@ -143,8 +142,7 @@ bool kbase_js_choose_affinity(u64 * const affinity,
 							num_core_groups);
 				*affinity =
 				kbdev->gpu_props.props.coherency_info.group[core_group_idx].core_mask
-						& core_availability_mask &
-						kbdev->pm.debug_core_mask[js];
+						& core_availability_mask;
 
 				/* If the job is specifically targeting core
 				 * group 1 and the core availability policy is
@@ -158,8 +156,7 @@ bool kbase_js_choose_affinity(u64 * const affinity,
 		} else {
 			/* All cores are available when no core split is
 			 * required */
-			*affinity = core_availability_mask &
-					kbdev->pm.debug_core_mask[js];
+			*affinity = core_availability_mask;
 		}
 	}
 

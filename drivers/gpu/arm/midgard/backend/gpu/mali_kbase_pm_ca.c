@@ -15,7 +15,8 @@
 
 
 
-/*
+/**
+ * @file mali_kbase_pm_ca.c
  * Base kernel core availability APIs
  */
 
@@ -30,10 +31,8 @@ static const struct kbase_pm_ca_policy *const policy_list[] = {
 #endif
 };
 
-/**
- * POLICY_COUNT - The number of policies available in the system.
- *
- * This is derived from the number of functions listed in policy_list.
+/** The number of policies available in the system.
+ *  This is derived from the number of functions listed in policy_get_functions.
  */
 #define POLICY_COUNT (sizeof(policy_list)/sizeof(*policy_list))
 
@@ -135,15 +134,13 @@ u64 kbase_pm_ca_get_core_mask(struct kbase_device *kbdev)
 
 	/* All cores must be enabled when instrumentation is in use */
 	if (kbdev->pm.backend.instr_enabled)
-		return kbdev->gpu_props.props.raw_props.shader_present &
-				kbdev->pm.debug_core_mask_all;
+		return kbdev->shader_present_bitmap & kbdev->pm.debug_core_mask;
 
 	if (kbdev->pm.backend.ca_current_policy == NULL)
-		return kbdev->gpu_props.props.raw_props.shader_present &
-				kbdev->pm.debug_core_mask_all;
+		return kbdev->shader_present_bitmap & kbdev->pm.debug_core_mask;
 
 	return kbdev->pm.backend.ca_current_policy->get_core_mask(kbdev) &
-						kbdev->pm.debug_core_mask_all;
+						kbdev->pm.debug_core_mask;
 }
 
 KBASE_EXPORT_TEST_API(kbase_pm_ca_get_core_mask);

@@ -233,6 +233,10 @@ config SOC_BUS
 
 source "drivers/base/regmap/Kconfig"
 
+#source "drivers/base/dma_buf_lock/src/Kconfig"
+source "drivers/base/kds/Kconfig"
+source "drivers/base/ump/Kconfig"
+
 config DMA_SHARED_BUFFER
 	bool
 	default n
@@ -242,6 +246,14 @@ config DMA_SHARED_BUFFER
 	  multiple drivers. A buffer is associated with a file using driver
 	  APIs extension; the file's descriptor can then be passed on to other
 	  driver.
+
+config DMA_SHARED_BUFFER_USES_KDS
+	bool "Synchronize access to dma_buf with KDS"
+	default n
+	select KDS
+	depends on DMA_SHARED_BUFFER
+	help
+	  This option adds a KDS resource within every dma_buf allocation.
 
 config FENCE_TRACE
 	bool "Enable verbose FENCE_TRACE messages"
