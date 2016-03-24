@@ -485,6 +485,30 @@ static const struct panel_desc rockchip_vga = {
 	},
 };
 
+static const struct drm_display_mode lp079qx1_edp_mode = {
+	.clock = 200020,   
+	.hdisplay = 1536,
+	.hsync_start = 1536 + 12,
+	.hsync_end = 1536 + 12 + 48,
+	.htotal = 1024 + 12 + 48 + 16,
+	.vdisplay = 2048,
+	.vsync_start = 2048 + 8,
+	.vsync_end = 2048 + 8 + 8,
+	.vtotal = 2048 + 8 + 8 + 4,
+	.vrefresh = 60,
+	.flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC,
+};
+
+static const struct panel_desc lp079qx1_edp = {
+	.modes = &lp079qx1_edp_mode,
+	.num_modes = 1,
+	.bpc = 8,
+	.size = {
+		.width = 1536,
+		.height = 2048,
+	},
+};
+
 static const struct drm_display_mode cmn_n116bgeea2_mode = {
 	.clock = 76420,
 	.hdisplay = 1366,
@@ -622,6 +646,9 @@ static const struct of_device_id platform_of_match[] = {
 	}, {
 		.compatible = "rockchip,vga",
 		.data = &rockchip_vga
+	}, {
+		.compatible = "lp079qx1,edp",
+		.data = &lp079qx1_edp
 	}, {
 		.compatible = "edt,et057090dhu",
 		.data = &edt_et057090dhu,
