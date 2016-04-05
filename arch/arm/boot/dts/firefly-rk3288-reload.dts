@@ -587,7 +587,7 @@
 };
 
 &lvds {
-	status = "okay";
+	status = "disabled";
 	rockchip,panel = <&panel>;
 };
 
