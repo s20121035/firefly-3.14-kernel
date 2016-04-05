@@ -33,6 +33,7 @@
 #include "rockchip_drm_fbdev.h"
 #include "rockchip_drm_gem.h"
 
+//#define DRIVER_NAME	"mali_drm"
 #define DRIVER_NAME	"rockchip"
 #define DRIVER_DESC	"RockChip Soc DRM"
 #define DRIVER_DATE	"20140818"

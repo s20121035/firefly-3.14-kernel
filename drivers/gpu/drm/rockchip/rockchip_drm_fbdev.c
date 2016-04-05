@@ -38,7 +38,7 @@ static int rockchip_fbdev_mmap(struct fb_info *info,
 	return rockchip_gem_mmap_buf(private->fbdev_bo, vma);
 }
 
-
+#ifdef CONFIG_UMP
 static int drm_fb_ioctl(struct fb_info *info, unsigned int cmd,
 		       unsigned long arg)
 {
@@ -62,6 +62,7 @@ static int drm_fb_ioctl(struct fb_info *info, unsigned int cmd,
             break;
     }
 }
+#endif
 
 
 static struct fb_ops rockchip_drm_fbdev_ops = {
@@ -70,8 +71,10 @@ static struct fb_ops rockchip_drm_fbdev_ops = {
 	.fb_fillrect	= cfb_fillrect,
 	.fb_copyarea	= cfb_copyarea,
 	.fb_imageblit	= cfb_imageblit,
+#ifdef CONFIG_UMP
     .fb_ioctl       = drm_fb_ioctl,
     .fb_compat_ioctl = drm_fb_ioctl,
+#endif
 	.fb_check_var	= drm_fb_helper_check_var,
 	.fb_set_par	= drm_fb_helper_set_par,
 	.fb_blank	= drm_fb_helper_blank,
@@ -103,7 +106,11 @@ static int rockchip_drm_fbdev_create(struct drm_fb_helper *helper,
 	mode_cmd.pixel_format = drm_mode_legacy_fb_format(sizes->surface_bpp,
 		sizes->surface_depth);
 
+#ifdef CONFIG_UMP
+	size = mode_cmd.pitches[0] * mode_cmd.height * 2;
+#else
 	size = mode_cmd.pitches[0] * mode_cmd.height;
+#endif
 
 	rk_obj = rockchip_gem_create_object(dev, size, true);
 	if (IS_ERR(rk_obj))
@@ -150,11 +157,12 @@ static int rockchip_drm_fbdev_create(struct drm_fb_helper *helper,
 	fbi->screen_size = rk_obj->base.size;
 	fbi->fix.smem_len = rk_obj->base.size;
 
-
+#ifdef CONFIG_UMP
     private->ump_memory_description.addr = fbi->screen_base;
     private->ump_memory_description.size = fbi->screen_size;
     private->ump_wrapped_buffer = ump_dd_handle_create_from_phys_blocks(
                       &private->ump_memory_description, 1);
+#endif
 
 
 	DRM_DEBUG_KMS("FB [%dx%d]-%d kvaddr=%p offset=%ld size=%d\n",

@@ -73,10 +73,11 @@ typedef struct ump_dd_physical_block_64
 	uint64_t size; /**< The length of the block, in bytes, typically page aligned */
 } ump_dd_physical_block_64;
 
-#define GET_UMP_SECURE_ID 311
-#define GET_UMP_SECURE_ID_1 312
-#define GET_UMP_SECURE_ID_2 313
-#define GET_UMP_SECURE_ID_3 314
+
+#define GET_UMP_SECURE_ID   _IOWR('m', 311, unsigned int)
+#define GET_UMP_SECURE_ID_1 _IOWR('m', 312, unsigned int)
+#define GET_UMP_SECURE_ID_2 _IOWR('m', 313, unsigned int)
+#define GET_UMP_SECURE_ID_3 _IOWR('m', 314, unsigned int)
 
 /**
  * Security filter hook.
