@@ -9,6 +9,8 @@
 #include "mali_kbase_rk.h"
 #include "mali_kbase_rk_dvfs.h"
 
+#ifdef CONFIG_MALI_MIDGARD_DVFS
+
 struct kbase_rk_dvfs_threshold {
 	unsigned long freq;
 	unsigned int min;
@@ -135,3 +137,42 @@ void kbase_rk_dvfs_term(struct kbase_device *kbdev)
 
 	cancel_work_sync(&dvfs->work);
 }
+
+#else
+
+//struct kbase_rk_dvfs {
+//};
+
+int kbase_rk_dvfs_init(struct kbase_device *kbdev)
+{
+	return 0;
+}
+
+void kbase_rk_dvfs_term(struct kbase_device *kbdev)
+{
+}
+
+void kbase_rk_set_dvfs(struct kbase_device *kbdev, bool enable)
+{
+}
+
+bool kbase_rk_dvfs_is_enabled(struct kbase_device *kbdev)
+{
+	return false;
+}
+
+void kbase_rk_dvfs_enable(struct kbase_device *kbdev)
+{
+}
+
+void kbase_rk_dvfs_disable(struct kbase_device *kbdev)
+{
+}
+
+unsigned int kbase_rk_dvfs_utilisation(struct kbase_device *kbdev)
+{
+	return 0;
+}
+
+#endif
+
