@@ -3500,7 +3500,7 @@ static int kbase_platform_device_probe(struct platform_device *pdev)
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(3, 12, 0)) && defined(CONFIG_OF) \
 			&& defined(CONFIG_REGULATOR)
-	kbdev->regulator = regulator_get_optional(kbdev->dev, "mali");
+	kbdev->regulator = regulator_get_optional(kbdev->dev, "vdd_gpu");
 	if (IS_ERR_OR_NULL(kbdev->regulator)) {
 		dev_info(kbdev->dev, "Continuing without Mali regulator control\n");
 		kbdev->regulator = NULL;
@@ -3511,7 +3511,7 @@ static int kbase_platform_device_probe(struct platform_device *pdev)
 #ifdef CONFIG_MALI_PLATFORM_DEVICETREE
 	pm_runtime_enable(kbdev->dev);
 #endif
-	kbdev->clock = clk_get(kbdev->dev, "clk_mali");
+	kbdev->clock = clk_get(kbdev->dev, "aclk_gpu");
 	if (IS_ERR_OR_NULL(kbdev->clock)) {
 		dev_info(kbdev->dev, "Continuing without Mali clock control\n");
 		kbdev->clock = NULL;
@@ -3819,7 +3819,22 @@ static struct platform_driver kbase_platform_driver = {
  * anymore when using Device Tree.
  */
 #ifdef CONFIG_OF
-module_platform_driver(kbase_platform_driver);
+//module_platform_driver(kbase_platform_driver);
+static int __init kbase_driver_init(void)
+{
+	int ret;
+	ret = platform_driver_register(&kbase_platform_driver);
+	return ret;
+}
+
+static void __exit kbase_driver_exit(void)
+{
+	platform_driver_unregister(&kbase_platform_driver);
+}
+
+device_initcall_sync(kbase_driver_init);
+module_exit(kbase_driver_exit);
+
 #else
 
 static int __init kbase_driver_init(void)
