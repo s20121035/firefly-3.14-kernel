@@ -120,6 +120,7 @@ static int rockchip_drm_load(struct drm_device *drm_dev, unsigned long flags)
 	if (ret)
 		goto err_detach_device;
 
+#if 1
 	/*
 	 * Attach rgb bridge to encoders needing it.
 	 */
@@ -150,6 +151,7 @@ static int rockchip_drm_load(struct drm_device *drm_dev, unsigned long flags)
 			}
 		}
 	}
+#endif
 
 	/*
 	 * All components are now added, we can publish the connector sysfs
@@ -178,8 +180,10 @@ static int rockchip_drm_load(struct drm_device *drm_dev, unsigned long flags)
 	drm_dev->irq_enabled = true;
 
 	ret = drm_vblank_init(drm_dev, ROCKCHIP_MAX_CRTC);
-	if (ret)
+	if (ret) {
+        dev_err(drm_dev->dev," %s fail\n",__FUNCTION__);
 		goto err_kms_helper_poll_fini;
+    }
 
 	/*
 	 * with vblank_disable_allowed = true, vblank interrupt will be disabled
@@ -189,8 +193,12 @@ static int rockchip_drm_load(struct drm_device *drm_dev, unsigned long flags)
 	drm_dev->vblank_disable_allowed = true;
 
 	ret = rockchip_drm_fbdev_init(drm_dev);
-	if (ret)
+	if (ret) {
+        dev_err(drm_dev->dev," %s fail\n",__FUNCTION__);
 		goto err_vblank_cleanup;
+    }
+
+    dev_err(drm_dev->dev,"rk drm load success \n");
 
 	return 0;
 err_vblank_cleanup:

@@ -39,6 +39,7 @@
 #include <drm/drmP.h>
 #include <drm/drm_core.h>
 
+//unsigned int drm_debug = 0xffff;	/* 1 to enable debug output */
 unsigned int drm_debug = 0;	/* 1 to enable debug output */
 EXPORT_SYMBOL(drm_debug);
 
@@ -104,10 +105,10 @@ void drm_ut_debug_printk(unsigned int request_level,
 		vaf.va = &args;
 
 		if (function_name)
-			printk(KERN_DEBUG "[%s:%s], %pV", prefix,
+			printk(KERN_ERR "[%s:%s], %pV", prefix,
 			       function_name, &vaf);
 		else
-			printk(KERN_DEBUG "%pV", &vaf);
+			printk(KERN_ERR "%pV", &vaf);
 		va_end(args);
 	}
 }

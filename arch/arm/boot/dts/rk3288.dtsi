@@ -765,10 +765,20 @@
 		reg = <0xff96c000 0x4000>;
 		clocks = <&cru PCLK_LVDS_PHY>;
 		clock-names = "pclk_lvds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&lcdc0_ctl>;
+		status = "disabled";
+
 		ports {
-			lvds_in: port {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			lvds_in: port@0 {
+				reg = <0>;
+
 				#address-cells = <1>;
 				#size-cells = <0>;
+
 				lvds_in_vopb: endpoint@0 {
 					reg = <0>;
 					remote-endpoint = <&vopb_out_lvds>;

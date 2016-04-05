@@ -492,6 +492,7 @@ struct drm_encoder {
 #ifdef CONFIG_OF
 	struct device_node *of_node;
 #endif
+	struct list_head list;
 	struct list_head head;
 
 	struct drm_mode_object base;
@@ -557,6 +558,10 @@ struct drm_encoder {
  */
 struct drm_connector {
 	struct drm_device *dev;
+#ifdef CONFIG_OF
+	struct device_node *of_node;
+#endif
+	struct list_head list;
 	struct device *kdev;
 	struct device_attribute *attr;
 	struct list_head head;
@@ -737,6 +742,7 @@ struct drm_plane {
  * @destroy: make object go away
  */
 struct drm_bridge_funcs {
+	int (*attach)(struct drm_bridge *bridge);
 	bool (*mode_fixup)(struct drm_bridge *bridge,
 			   const struct drm_display_mode *mode,
 			   struct drm_display_mode *adjusted_mode);
@@ -762,7 +768,13 @@ struct drm_bridge {
 	struct drm_device *dev;
 	struct list_head head;
 
+#ifdef CONFIG_OF
+	struct device_node *of_node;
+#endif
+	struct list_head list;
+
 	struct drm_mode_object base;
+    struct drm_encoder *encoder;
 
 	const struct drm_bridge_funcs *funcs;
 	void *driver_private;
@@ -1029,6 +1041,9 @@ extern int drm_crtc_set_property(struct drm_crtc *crtc,
 
 extern void drm_connector_ida_init(void);
 extern void drm_connector_ida_destroy(void);
+extern int drm_connector_add(struct drm_connector *connector);
+extern void drm_connector_remove(struct drm_connector *connector);
+extern struct drm_connector *of_drm_find_connector(struct device_node *np);
 extern int drm_connector_init(struct drm_device *dev,
 			      struct drm_connector *connector,
 			      const struct drm_connector_funcs *funcs,
@@ -1045,6 +1060,14 @@ extern int drm_bridge_init(struct drm_device *dev, struct drm_bridge *bridge,
 			   const struct drm_bridge_funcs *funcs);
 extern void drm_bridge_cleanup(struct drm_bridge *bridge);
 
+extern int drm_bridge_add(struct drm_bridge *bridge);
+extern void drm_bridge_remove(struct drm_bridge *bridge);
+extern struct drm_bridge *of_drm_find_bridge(struct device_node *np);
+extern int drm_bridge_attach(struct drm_device *dev, struct drm_bridge *bridge);
+
+extern int drm_encoder_add(struct drm_encoder *encoder);
+extern void drm_encoder_remove(struct drm_encoder *encoder);
+extern struct drm_encoder *of_drm_find_encoder(struct device_node *np);
 extern int drm_encoder_init(struct drm_device *dev,
 			    struct drm_encoder *encoder,
 			    const struct drm_encoder_funcs *funcs,

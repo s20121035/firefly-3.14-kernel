@@ -1142,6 +1142,48 @@ static void drm_mode_remove(struct drm_connector *connector,
 	drm_mode_destroy(connector->dev, mode);
 }
 
+
+static DEFINE_MUTEX(connector_lock);
+static LIST_HEAD(connector_list);
+
+int drm_connector_add(struct drm_connector *connector)
+{
+	mutex_lock(&connector_lock);
+	list_add_tail(&connector->list, &connector_list);
+	mutex_unlock(&connector_lock);
+
+	return 0;
+}
+EXPORT_SYMBOL(drm_connector_add);
+
+void drm_connector_remove(struct drm_connector *connector)
+{
+	mutex_lock(&connector_lock);
+	list_del_init(&connector->list);
+	mutex_unlock(&connector_lock);
+}
+EXPORT_SYMBOL(drm_connector_remove);
+
+#ifdef CONFIG_OF
+struct drm_connector *of_drm_find_connector(struct device_node *np)
+{
+	struct drm_connector *connector;
+
+	mutex_lock(&connector_lock);
+
+	list_for_each_entry(connector, &connector_list, list) {
+		if (connector->of_node == np) {
+			mutex_unlock(&connector_lock);
+			return connector;
+		}
+	}
+
+	mutex_unlock(&connector_lock);
+	return NULL;
+}
+EXPORT_SYMBOL(of_drm_find_connector);
+#endif
+
 /**
  * drm_connector_init - Init a preallocated connector
  * @dev: DRM device
@@ -1344,6 +1386,48 @@ void drm_bridge_cleanup(struct drm_bridge *bridge)
 	drm_modeset_unlock_all(dev);
 }
 EXPORT_SYMBOL(drm_bridge_cleanup);
+
+static DEFINE_MUTEX(encoder_lock);
+static LIST_HEAD(encoder_list);
+
+int drm_encoder_add(struct drm_encoder *encoder)
+{
+	mutex_lock(&encoder_lock);
+	list_add_tail(&encoder->list, &encoder_list);
+	mutex_unlock(&encoder_lock);
+
+	return 0;
+}
+EXPORT_SYMBOL(drm_encoder_add);
+
+void drm_encoder_remove(struct drm_encoder *encoder)
+{
+	mutex_lock(&encoder_lock);
+	list_del_init(&encoder->list);
+	mutex_unlock(&encoder_lock);
+}
+EXPORT_SYMBOL(drm_encoder_remove);
+
+#ifdef CONFIG_OF
+struct drm_encoder *of_drm_find_encoder(struct device_node *np)
+{
+	struct drm_encoder *encoder;
+
+	mutex_lock(&encoder_lock);
+
+	list_for_each_entry(encoder, &encoder_list, list) {
+		if (encoder->of_node == np) {
+			mutex_unlock(&encoder_lock);
+			return encoder;
+		}
+	}
+
+	mutex_unlock(&encoder_lock);
+	return NULL;
+}
+EXPORT_SYMBOL(of_drm_find_encoder);
+#endif
+
 
 /**
  * drm_encoder_init - Init a preallocated encoder

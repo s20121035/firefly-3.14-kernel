@@ -25,10 +25,4 @@ config DRM_I2C_NXP_TDA998X
 	help
 	  Support for NXP Semiconductors TDA998X HDMI encoders.
 
-config DRM_VGA_SIMPLE
-	tristate "Generic simple vga encoder"
-	help
-	  Support for vga encoder chips without any special settings
-	  and at most a power-control gpio.
-
 endmenu
