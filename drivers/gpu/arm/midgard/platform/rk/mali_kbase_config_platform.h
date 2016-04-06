@@ -52,7 +52,8 @@
  * Attached value: pointer to @ref kbase_pm_callback_conf
  * Default value: See @ref kbase_pm_callback_conf
  */
-#define POWER_MANAGEMENT_CALLBACKS (&kbase_rk_pm_callbacks)
+//#define POWER_MANAGEMENT_CALLBACKS (&kbase_rk_pm_callbacks)
+#define POWER_MANAGEMENT_CALLBACKS (NULL)
 
 /**
  * Platform specific configuration functions
