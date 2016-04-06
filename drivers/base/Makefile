@@ -24,9 +24,9 @@ obj-$(CONFIG_PINCTRL) += pinctrl.o
 obj-$(CONFIG_DEV_COREDUMP) += devcoredump.o
 
 obj-y			+= test/
-obj-y           += ump/ 
-obj-y           += dma_buf_lock/src/
-obj-y           += kds/ 
+#obj-y           += ump/ 
+#obj-y           += dma_buf_lock/src/
+#obj-y           += kds/ 
 
 ccflags-$(CONFIG_DEBUG_DRIVER) := -DDEBUG
 
