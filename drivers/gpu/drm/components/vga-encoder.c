@@ -53,8 +53,6 @@ static void vga_encoder_dpms(struct drm_encoder *encoder, int mode)
 
 	mutex_lock(&vga->enable_lock);
 
-    dev_err(vga->dev,"%s line %d, mode %d \n",__FUNCTION__,__LINE__,mode);
-
 	switch (mode) {
 	case DRM_MODE_DPMS_ON:
 		if (vga->enabled)
