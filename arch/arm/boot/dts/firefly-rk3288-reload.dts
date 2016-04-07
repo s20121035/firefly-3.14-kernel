@@ -347,8 +347,8 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&sdio0_clk &sdio0_cmd &sdio0_bus4>;
 	status = "okay";
-	vmmc-supply = <&vcc_18>;
-	//vqmmc-supply = <&vccio_wl>;
+	vmmc-supply = <&vcc_io>;
+	vqmmc-supply = <&vcc_18>;
 };
 
 &sdmmc {
@@ -365,7 +365,7 @@
 };
 
 &i2c0 {
-	clock-frequency = <400000>;
+	clock-frequency = <200000>;
 	status = "okay";
 
     syr827: syr827@40 {
@@ -435,15 +435,14 @@
 
 	regulators {
 
-		dcdc1_reg: regulator@0{
-			regulator-name= "act_dcdc1";
+		vcc_sys: regulator@0{
+			regulator-name= "vcc_sys";
 			regulator-min-microvolt = <1200000>;
 			regulator-max-microvolt = <1200000>;
 			regulator-always-on;
 			regulator-boot-on;
 		};
 
-		//dcdc2_reg: regulator@1 {
 		vcc_io: regulator@1 {
 			regulator-name= "vcc_io";
 			regulator-min-microvolt = <3300000>;
@@ -456,7 +455,6 @@
 			};
 		};
 
-		//dcdc3_reg: regulator@2 {
 		vdd_logic: regulator@2 {
 			regulator-name= "vdd_logic";
 			regulator-min-microvolt = <700000>;
@@ -482,44 +480,44 @@
 			};
 		};
 
-		ldo1_reg: regulator@4 {
+		vccio_sd: regulator@4 {
 			regulator-name= "vccio_sd";
-			regulator-min-microvolt = <1800000>;
+			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 			regulator-always-on;
 
 		};
 
-		ldo2_reg: regulator@5 {
-			regulator-name= "act_ldo2";
+		vdd10_lcd: regulator@5 {
+			regulator-name= "vdd10_lcd";   //vdd10_lcd
 			regulator-min-microvolt = <1050000>;
 			regulator-max-microvolt = <1050000>;
 			regulator-always-on;
 		};
 
-		ldo3_reg: regulator@6 {
-			regulator-name= "act_ldo3";     //vcc18
+		afvdd_28: regulator@6 {
+			regulator-name= "afvdd_28";     //afvdd2v8   for cif camera
 			regulator-min-microvolt = <1800000>;
 			regulator-max-microvolt = <1800000>;
 			
 		};
 
-		ldo4_reg:regulator@7 {
-			regulator-name= "act_ldo4";
+		vcca_33:regulator@7 {
+			regulator-name= "vcca_33";    //vcca_33
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 
 		};
 
 		vcc_lan: regulator@8 {
-			regulator-name= "act_ldo5";
+			regulator-name= "vcc_lan";   //vcc_lan
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 
 		};
 
-		ldo6_reg: regulator@9 {
-			regulator-name= "act_ldo6";
+		vdd_10: regulator@9 {          //vdd_10
+			regulator-name= "vdd_10";
 			regulator-min-microvolt = <1100000>;
 			regulator-max-microvolt = <1100000>;
 			regulator-initial-state = <3>;
@@ -543,8 +541,8 @@
 
 		};
 
-		ldo8_reg: regulator@11 {
-			regulator-name= "act_ldo8";
+		vcc18_lcd: regulator@11 {
+			regulator-name= "vcc18_lcd";
 			regulator-min-microvolt = <1850000>;
 			regulator-max-microvolt = <1850000>;
 			regulator-always-on;
@@ -639,9 +637,9 @@
 };
 
 &lvds {
-	avdd1v0-supply = <&ldo2_reg>;
-	avdd1v8-supply = <&ldo8_reg>;
-	avdd3v3-supply = <&ldo4_reg>;
+	avdd1v0-supply = <&vdd10_lcd>;
+	avdd1v8-supply = <&vcc18_lcd>;
+	avdd3v3-supply = <&vcca_33>;
 	rockchip,data-mapping = "jeida";
 	rockchip,data-width = <24>;
 	rockchip,output = "rgb";
