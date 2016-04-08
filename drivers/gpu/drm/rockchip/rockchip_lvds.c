@@ -772,9 +772,6 @@ static int rockchip_lvds_probe(struct platform_device *pdev)
 		struct drm_encoder *encoder;
 		struct component_match *match = NULL;
 
-
-        printk("%s  %d \n",__FUNCTION__,__LINE__);
-
 		/* Try to find an encoder in the output node */
 		encoder = of_drm_find_encoder(output_node);
 		if (!encoder) {
@@ -784,7 +781,6 @@ static int rockchip_lvds_probe(struct platform_device *pdev)
 			goto err_unprepare_pclk;
 		}
 
-        printk("%s  %d \n",__FUNCTION__,__LINE__);
 		lvds->ext_encoder = encoder;
 
 		component_match_add(dev, &match, compare_of, output_node);
@@ -797,7 +793,6 @@ static int rockchip_lvds_probe(struct platform_device *pdev)
 			dev_err(&pdev->dev, "failed to add bridge %d\n", ret);
 			goto err_unprepare_pclk;
 		}
-        printk("%s  %d \n",__FUNCTION__,__LINE__);
 
 		ret = component_master_add_with_match(dev,
 						      &rockchip_lvds_master_ops,
