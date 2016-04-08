@@ -36,11 +36,20 @@ config SND_SOC_ROCKCHIP_WM8960
 	help
 	  Say Y if you want to add support for SoC audio on rockchip
 	  with the WM8960.
-config SND_RK_SOC_RT5631
-	tristate "SoC I2S Audio support for rockchip - RT5631"
+config SND_SOC_ROCKCHIP_RT5631
+	tristate "ASoC support for Rockchip boards using a rt5631 codec"
 	depends on SND_SOC_ROCKCHIP
 	select SND_SOC_ROCKCHIP_I2S
 	select SND_SOC_RT5631
 	help
 	  Say Y if you want to add support for SoC audio on rockchip
 	  with the RT5631.
+
+config SND_SOC_ROCKCHIP_ES8323
+	tristate "ASoC support for Rockchip boards using a es8323 codec"
+	depends on SND_SOC_ROCKCHIP
+	select SND_SOC_ROCKCHIP_I2S
+	select SND_SOC_ES8323
+	help
+	  Say Y if you want to add support for SoC audio on rockchip
+	  with the ES8323.

@@ -10,6 +10,8 @@
  * published by the Free Software Foundation.
  */
 
+//#define DEBUG
+
 #include <linux/module.h>
 #include <linux/delay.h>
 #include <linux/of_gpio.h>
@@ -64,19 +66,19 @@ static int i2s_runtime_resume(struct device *dev)
 	clk_set_rate(i2s->mclk,11289600);
 	ret = clk_prepare_enable(i2s->mclk);
 	if (ret) {
-		printk("mclk enable failed %d\n", ret);
+		dev_err(dev,"mclk enable failed %d\n", ret);
 		return ret;
 	}
-	printk("cpu dai mclk enable success %d\n", ret);
+	dev_dbg(dev,"cpu dai mclk enable success %d\n", ret);
 
 	if (i2s->oclk) {
 		ret = clk_prepare_enable(i2s->oclk);
 		if (ret) {
-			printk("oclk enable failed %d\n", ret);
+			dev_err(dev,"oclk enable failed %d\n", ret);
 			return ret;
 		}
 	}
-	printk("cpu dai oclk enable success %d\n", ret);
+	dev_dbg(dev,"cpu dai oclk enable success %d\n", ret);
 
 	return 0;
 }
@@ -184,17 +186,17 @@ static int rockchip_i2s_set_fmt(struct snd_soc_dai *cpu_dai,
 	struct rk_i2s_dev *i2s = to_info(cpu_dai);
 	unsigned int mask = 0, val = 0;
 
-	printk("cpu dai set fmt %d\n", fmt);
+	dev_dbg(i2s->dev,"cpu dai set fmt %d\n", fmt);
 
 	mask = I2S_CKR_MSS_MASK;
 	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
 	case SND_SOC_DAIFMT_CBS_CFS:
-		printk("set cpu dai to master mode\n");
+		dev_dbg(i2s->dev,"set cpu dai to master mode\n");
 		/* Set source clock in Master mode */
 		val = I2S_CKR_MSS_MASTER;
 		break;
 	case SND_SOC_DAIFMT_CBM_CFM:
-		printk("set cpu dai to slave mode\n");
+		dev_dbg(i2s->dev,"set cpu dai to slave mode\n");
 		val = I2S_CKR_MSS_SLAVE;
 		break;
 	default:
@@ -319,11 +321,46 @@ static int rockchip_i2s_set_sysclk(struct snd_soc_dai *cpu_dai, int clk_id,
 
 	ret = clk_set_rate(i2s->mclk, freq);
 	if (ret)
-		printk("Fail to set mclk %d\n", ret);
+		dev_err(i2s->dev,"Fail to set mclk %d\n", ret);
 
-	printk("Success to set cpu dai mclk %d\n", freq);
+	dev_dbg(i2s->dev,"Success to set cpu dai mclk %d\n", freq);
 
 	return ret;
+}
+
+static DEFINE_SPINLOCK(lock);
+static int rockchip_i2s_set_clkdiv(struct snd_soc_dai *cpu_dai,
+				   int div_id, int div)
+{
+	struct rk_i2s_dev *i2s = to_info(cpu_dai);
+	unsigned int val = 0;
+	unsigned long flags;
+
+	spin_lock_irqsave(&lock, flags);
+
+	dev_dbg(i2s->dev, "%s: div_id=%d, div=%d\n", __func__, div_id, div);
+
+	switch (div_id) {
+	case ROCKCHIP_DIV_BCLK:
+		val |= I2S_CKR_TSD(div);
+		val |= I2S_CKR_RSD(div);
+		regmap_update_bits(i2s->regmap, I2S_CKR,
+				   I2S_CKR_TSD_MASK | I2S_CKR_RSD_MASK,
+				   val);
+		break;
+	case ROCKCHIP_DIV_MCLK:
+		val |= I2S_CKR_MDIV(div);
+		regmap_update_bits(i2s->regmap, I2S_CKR,
+				   I2S_CKR_MDIV_MASK, val);
+		break;
+	default:
+		spin_unlock_irqrestore(&lock, flags);
+		return -EINVAL;
+	}
+
+	spin_unlock_irqrestore(&lock, flags);
+
+	return 0;
 }
 
 static int rockchip_i2s_dai_probe(struct snd_soc_dai *dai)
@@ -339,6 +376,7 @@ static int rockchip_i2s_dai_probe(struct snd_soc_dai *dai)
 static const struct snd_soc_dai_ops rockchip_i2s_dai_ops = {
 	.hw_params = rockchip_i2s_hw_params,
 	.set_sysclk = rockchip_i2s_set_sysclk,
+	.set_clkdiv = rockchip_i2s_set_clkdiv,
 	.set_fmt = rockchip_i2s_set_fmt,
 	.trigger = rockchip_i2s_trigger,
 };

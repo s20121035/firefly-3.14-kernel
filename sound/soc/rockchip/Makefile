@@ -11,5 +11,7 @@ obj-$(CONFIG_SND_SOC_ROCKCHIP_HDMI_AUDIO) += snd-soc-rockchip-hdmi-audio.o
 
 snd-soc-wm8960-objs := rockchip_wm8960.o
 snd-soc-rt5631-objs := rockchip_rt5631.o
+snd-soc-es8323-objs := rockchip_es8323.o
 obj-$(CONFIG_SND_SOC_ROCKCHIP_WM8960) += snd-soc-wm8960.o
-obj-$(CONFIG_SND_RK_SOC_RT5631) += snd-soc-rt5631.o
+obj-$(CONFIG_SND_SOC_ROCKCHIP_ES8323) += snd-soc-es8323.o
+obj-$(CONFIG_SND_SOC_ROCKCHIP_RT5631) += snd-soc-rt5631.o

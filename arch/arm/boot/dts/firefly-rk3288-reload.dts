@@ -72,17 +72,7 @@
 		pwms = <&pwm0 0 1000000 0>;
 	};
 
-	sound {
-		compatible = "rockchip,rockchip-audio-wm8960";
-		rockchip,model = "ROCKCHIP-I2S";
-		rockchip,i2s-controller = <&i2s>;
-		rockchip,audio-codec = <&wm8960>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&spk_con>;
-		status = "okay";
-	};
-
-	panel: panel {
+    panel: panel {
 		compatible = "rockchip,vga", "simple-panel";
 		status = "okay";
 		enable-gpios = <&gpio7 21 GPIO_ACTIVE_HIGH>;
@@ -230,10 +220,10 @@
         };
 
   	sound {
-		compatible = "rockchip,rockchip-audio-wm8960";
+		compatible = "rockchip,rockchip-audio-es8323";
 		rockchip,model = "ROCKCHIP-I2S";
 		rockchip,i2s-controller = <&i2s>;
-		rockchip,audio-codec = <&wm8960>;
+		rockchip,audio-codec = <&es8323>;
 		status = "okay";
 	};
 	
@@ -506,7 +496,7 @@
 			regulator-name= "vcca_33";    //vcca_33
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
-
+			regulator-always-on;
 		};
 
 		vcc_lan: regulator@8 {
@@ -588,10 +578,19 @@
 		status = "disabled";
 	};
 
+	es8323: es8323@10 {
+	    compatible = "es8323";
+		reg = <0x10>;
+		//spk-con-gpio = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+		ear-con-gpio = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+		hp-det-gpio = <&gpio7 15 GPIO_ACTIVE_HIGH>;
+		hp-mic-only = <1>;
+	};
+
 	wm8960: wm8960@1a {
 		compatible = "wm8960";
 		reg = <0x1a>;
-		status = "okay";
+		status = "disabled";
 	};
 };
 
