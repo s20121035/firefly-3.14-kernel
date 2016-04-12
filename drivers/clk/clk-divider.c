@@ -366,7 +366,10 @@ int divider_get_val(unsigned long rate, unsigned long parent_rate,
 {
 	unsigned int div, value;
 
-	div = DIV_ROUND_UP(parent_rate, rate);
+        if(rate)
+                div = DIV_ROUND_UP(parent_rate, rate);
+        else 
+                div = 0;
 
 	if (!_is_valid_div(table, div, flags))
 		return -EINVAL;
