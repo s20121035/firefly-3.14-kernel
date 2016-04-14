@@ -151,12 +151,12 @@ static struct snd_soc_card rockchip_es8323_snd_card = {
     .owner = THIS_MODULE,
     .dai_link = &rk29_dai,
     .num_links = 1,
+    /*
     .dapm_widgets = rk29_dapm_widgets,
     .num_dapm_widgets = ARRAY_SIZE(rk29_dapm_widgets),
     .dapm_routes = audio_map,
     .num_dapm_routes = ARRAY_SIZE(audio_map),
-    //.controls = rockchip_wm8960_controls,
-    //.num_controls = ARRAY_SIZE(rockchip_wm8960_controls),
+    */
 };
 
 static int rockchip_es8323_audio_probe(struct platform_device *pdev)
