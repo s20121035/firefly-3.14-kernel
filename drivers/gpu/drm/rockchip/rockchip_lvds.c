@@ -76,6 +76,8 @@ struct rockchip_lvds {
 
 	struct mutex suspend_lock;
 	int suspend;
+
+	unsigned int val;
 };
 
 static inline void lvds_writel(struct rockchip_lvds *lvds, u32 offset, u32 val)
@@ -132,6 +134,8 @@ static int rockchip_lvds_poweron(struct rockchip_lvds *lvds)
 	writel(RK3288_LVDS_CFG_REG21_TX_ENABLE,
 	       lvds->regs + RK3288_LVDS_CFG_REG21);
 
+	ret = regmap_write(lvds->grf,
+			   lvds->soc_data->grf_soc_con7, lvds->val);
 	return 0;
 }
 
@@ -277,6 +281,7 @@ static void rockchip_lvds_mode_set(struct rockchip_lvds *lvds,
 	val |= (pin_dclk << 8) | (pin_hsync << 9);
 	val |= (0xffff << 16);
 	ret = regmap_write(lvds->grf, lvds->soc_data->grf_soc_con7, val);
+	lvds->val = val;
 	if (ret != 0) {
 		dev_err(lvds->dev, "Could not write to GRF: %d\n", ret);
 		return;
