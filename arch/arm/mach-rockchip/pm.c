@@ -150,11 +150,14 @@ static void rk3288_slp_mode_set(int level)
 	regmap_write(pmu_regmap, RK3288_PMU_WAKEUP_CFG1,
 		     PMU_ARMINT_WAKEUP_EN);
 
-	mode_set = BIT(PMU_GLOBAL_INT_DISABLE) | BIT(PMU_L2FLUSH_EN) |
+	mode_set = BIT(PMU_L2FLUSH_EN) |
 		   BIT(PMU_SREF0_ENTER_EN) | BIT(PMU_SREF1_ENTER_EN) |
 		   BIT(PMU_DDR0_GATING_EN) | BIT(PMU_DDR1_GATING_EN) |
-		   BIT(PMU_PWR_MODE_EN) | BIT(PMU_CHIP_PD_EN) |
+		   BIT(PMU_CHIP_PD_EN) |
 		   BIT(PMU_SCU_EN);
+
+    //mode_set |= BIT(PMU_GLOBAL_INT_DISABLE) | BIT(PMU_PWR_MODE_EN);
+
 
 	mode_set1 = BIT(PMU_CLR_CORE) | BIT(PMU_CLR_CPUP);
 
