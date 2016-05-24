@@ -1,14 +1,17 @@
 /*
- * sound/soc/rockchip/rockchip_i2s.h
+ * Rockchip I2S ALSA SoC Digital Audio Interface(DAI)  driver
  *
- * ALSA SoC Audio Layer - Rockchip I2S Controller driver
+ * Copyright (C) 2015 Fuzhou Rockchip Electronics Co., Ltd
  *
- * Copyright (c) 2014 Rockchip Electronics Co. Ltd.
- * Author: Jianqun xu <jay.xu@rock-chips.com>
+ * This software is licensed under the terms of the GNU General Public
+ * License version 2, as published by the Free Software Foundation, and
+ * may be copied, distributed, and modified under those terms.
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
  */
 
 #ifndef _ROCKCHIP_IIS_H
@@ -22,6 +25,10 @@
 #define I2S_TXCR_RCNT_MASK	(0x3f << I2S_TXCR_RCNT_SHIFT)
 #define I2S_TXCR_CSR_SHIFT	15
 #define I2S_TXCR_CSR(x)		(x << I2S_TXCR_CSR_SHIFT)
+#define I2S_TXCR_CHN_2		(0 << I2S_TXCR_CSR_SHIFT)
+#define I2S_TXCR_CHN_4		(1 << I2S_TXCR_CSR_SHIFT)
+#define I2S_TXCR_CHN_6		(2 << I2S_TXCR_CSR_SHIFT)
+#define I2S_TXCR_CHN_8		(3 << I2S_TXCR_CSR_SHIFT)
 #define I2S_TXCR_CSR_MASK	(3 << I2S_TXCR_CSR_SHIFT)
 #define I2S_TXCR_HWT		BIT(14)
 #define I2S_TXCR_SJM_SHIFT	12
@@ -41,6 +48,7 @@
 #define I2S_TXCR_TFS_SHIFT	5
 #define I2S_TXCR_TFS_I2S	(0 << I2S_TXCR_TFS_SHIFT)
 #define I2S_TXCR_TFS_PCM	(1 << I2S_TXCR_TFS_SHIFT)
+#define I2S_TXCR_TFS_MASK	(1 << I2S_TXCR_TFS_SHIFT)
 #define I2S_TXCR_VDW_SHIFT	0
 #define I2S_TXCR_VDW(x)		((x - 1) << I2S_TXCR_VDW_SHIFT)
 #define I2S_TXCR_VDW_MASK	(0x1f << I2S_TXCR_VDW_SHIFT)
@@ -67,6 +75,7 @@
 #define I2S_RXCR_TFS_SHIFT	5
 #define I2S_RXCR_TFS_I2S	(0 << I2S_RXCR_TFS_SHIFT)
 #define I2S_RXCR_TFS_PCM	(1 << I2S_RXCR_TFS_SHIFT)
+#define I2S_RXCR_TFS_MASK	(1 << I2S_RXCR_TFS_SHIFT)
 #define I2S_RXCR_VDW_SHIFT	0
 #define I2S_RXCR_VDW(x)		((x - 1) << I2S_RXCR_VDW_SHIFT)
 #define I2S_RXCR_VDW_MASK	(0x1f << I2S_RXCR_VDW_SHIFT)
@@ -89,13 +98,13 @@
 #define I2S_CKR_TLP_NORMAL	(0 << I2S_CKR_TLP_SHIFT)
 #define I2S_CKR_TLP_OPPSITE	(1 << I2S_CKR_TLP_SHIFT)
 #define I2S_CKR_MDIV_SHIFT	16
-#define I2S_CKR_MDIV(x)		((x - 1) << I2S_CKR_MDIV_SHIFT)
+#define I2S_CKR_MDIV(x)		((x) << I2S_CKR_MDIV_SHIFT)
 #define I2S_CKR_MDIV_MASK	(0xff << I2S_CKR_MDIV_SHIFT)
 #define I2S_CKR_RSD_SHIFT	8
-#define I2S_CKR_RSD(x)		((x - 1) << I2S_CKR_RSD_SHIFT)
+#define I2S_CKR_RSD(x)		((x) << I2S_CKR_RSD_SHIFT)
 #define I2S_CKR_RSD_MASK	(0xff << I2S_CKR_RSD_SHIFT)
 #define I2S_CKR_TSD_SHIFT	0
-#define I2S_CKR_TSD(x)		((x - 1) << I2S_CKR_TSD_SHIFT)
+#define I2S_CKR_TSD(x)		((x) << I2S_CKR_TSD_SHIFT)
 #define I2S_CKR_TSD_MASK	(0xff << I2S_CKR_TSD_SHIFT)
 
 /*
@@ -120,12 +129,14 @@
 #define I2S_DMACR_RDE_SHIFT	24
 #define I2S_DMACR_RDE_DISABLE	(0 << I2S_DMACR_RDE_SHIFT)
 #define I2S_DMACR_RDE_ENABLE	(1 << I2S_DMACR_RDE_SHIFT)
+#define I2S_DMACR_RDE_MASK	(1 << I2S_DMACR_RDE_SHIFT)
 #define I2S_DMACR_RDL_SHIFT	16
 #define I2S_DMACR_RDL(x)	((x - 1) << I2S_DMACR_RDL_SHIFT)
 #define I2S_DMACR_RDL_MASK	(0x1f << I2S_DMACR_RDL_SHIFT)
 #define I2S_DMACR_TDE_SHIFT	8
 #define I2S_DMACR_TDE_DISABLE	(0 << I2S_DMACR_TDE_SHIFT)
 #define I2S_DMACR_TDE_ENABLE	(1 << I2S_DMACR_TDE_SHIFT)
+#define I2S_DMACR_TDE_MASK	(1 << I2S_DMACR_TDE_SHIFT)
 #define I2S_DMACR_TDL_SHIFT	0
 #define I2S_DMACR_TDL(x)	((x) << I2S_DMACR_TDL_SHIFT)
 #define I2S_DMACR_TDL_MASK	(0x1f << I2S_DMACR_TDL_SHIFT)
@@ -155,9 +166,6 @@
  * INTSR
  * interrupt status register
 */
-#define I2S_INTSR_TXEIE_SHIFT	0
-#define I2S_INTSR_TXEIE_DISABLE	(0 << I2S_INTSR_TXEIE_SHIFT)
-#define I2S_INTSR_TXEIE_ENABLE	(1 << I2S_INTSR_TXEIE_SHIFT)
 #define I2S_INTSR_RXOI_SHIFT	17
 #define I2S_INTSR_RXOI_INA	(0 << I2S_INTSR_RXOI_SHIFT)
 #define I2S_INTSR_RXOI_ACT	(1 << I2S_INTSR_RXOI_SHIFT)
@@ -178,34 +186,20 @@
 #define I2S_XFER_RXS_SHIFT	1
 #define I2S_XFER_RXS_STOP	(0 << I2S_XFER_RXS_SHIFT)
 #define I2S_XFER_RXS_START	(1 << I2S_XFER_RXS_SHIFT)
+#define I2S_XFER_RXS_MASK	(1 << I2S_XFER_RXS_SHIFT)
 #define I2S_XFER_TXS_SHIFT	0
 #define I2S_XFER_TXS_STOP	(0 << I2S_XFER_TXS_SHIFT)
 #define I2S_XFER_TXS_START	(1 << I2S_XFER_TXS_SHIFT)
+#define I2S_XFER_TXS_MASK	(1 << I2S_XFER_TXS_SHIFT)
 
 /*
  * CLR
  * clear SCLK domain logic register
 */
 #define I2S_CLR_RXC	BIT(1)
+#define I2S_CLR_RXC_MASK	BIT(1)
 #define I2S_CLR_TXC	BIT(0)
-
-/*
- * TXDR
- * Transimt FIFO data register, write only.
-*/
-#define I2S_TXDR_MASK	(0xff)
-
-/*
- * RXDR
- * Receive FIFO data register, write only.
-*/
-#define I2S_RXDR_MASK	(0xff)
-
-/* Clock divider id */
-enum {
-	ROCKCHIP_DIV_MCLK = 0,
-	ROCKCHIP_DIV_BCLK,
-};
+#define I2S_CLR_TXC_MASK	BIT(0)
 
 /* I2S REGS */
 #define I2S_TXCR	(0x0000)
@@ -220,4 +214,21 @@ enum {
 #define I2S_TXDR	(0x0024)
 #define I2S_RXDR	(0x0028)
 
+/* Clock dividers */
+#define ROCKCHIP_DIV_MCLK	0
+#define ROCKCHIP_DIV_BCLK	1
+#define ROCKCHIP_DIV_PRESCALER	2
+
+/* channel */
+#define I2S_CHANNEL_8	8
+#define I2S_CHANNEL_6	6
+#define I2S_CHANNEL_4	4
+#define I2S_CHANNEL_2	2
+
+#define I2S_XFER_MODE	0
+#define PCM_XFER_MODE	1
+
 #endif /* _ROCKCHIP_IIS_H */
+
+
+

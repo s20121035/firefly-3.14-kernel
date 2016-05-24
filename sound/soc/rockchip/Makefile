@@ -1,6 +1,6 @@
 # ROCKCHIP Platform Support
 snd-soc-i2s-objs := rockchip_i2s.o
-obj-$(CONFIG_SND_SOC_ROCKCHIP_I2S) += snd-soc-i2s.o
+obj-$(CONFIG_SND_SOC_ROCKCHIP_I2S) += snd-soc-i2s.o rk_pcm.o
 
 # ROCKCHIP Machine Support
 snd-soc-rockchip-max98090-objs := rockchip_max98090.o
