@@ -90,6 +90,7 @@ static struct map_desc rk3288_io_desc[] __initdata = {
 
 
 static int boot_mode;
+static int restart_flag;
 
 static inline const char *boot_mode_name(u32 mode)
 {
@@ -177,6 +178,12 @@ void rockchip_restart_get_boot_mode(const char *cmd, u32 *flag, u32 *mode)
                         *mode = BOOT_MODE_RAMFS;
                 }
         }
+	
+	if(restart_flag == 2){
+                        *flag = SYS_LOADER_REBOOT_FLAG + BOOT_RAMFS;
+                        *mode = BOOT_MODE_RAMFS;
+	}
+	restart_flag = 0;
 }
 static void __init rk3288_boot_mode_init(void)
 {
@@ -261,11 +268,20 @@ static void __init rockchip_memory_init(void)
 	rockchip_ion_reserve();
 }
 
+void rk3288_set_restart_flag(const char *cmd)
+{
+	if(strcmp(cmd,"ramfs")==0)
+	   restart_flag = 2;
+	else 
+	   restart_flag = 0;
+}
+
 static void rk3288_restart(char mode, const char *cmd)
 {
         u32 boot_flag, boot_mode;
 	
         rockchip_restart_get_boot_mode(cmd, &boot_flag, &boot_mode);
+	
         writel_relaxed(boot_flag, RK_PMU_VIRT + RK3288_PMU_SYS_REG0);   // for loader
         writel_relaxed(boot_mode, RK_PMU_VIRT + RK3288_PMU_SYS_REG1);   // for linux
         dsb();

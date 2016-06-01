@@ -345,7 +345,18 @@ SYSCALL_DEFINE4(reboot, int, magic1, int, magic2, unsigned int, cmd,
 
 		kernel_restart(buffer);
 		break;
-
+#ifdef CONFIG_ARCH_ROCKCHIP
+	extern void rk3288_set_restart_flag(const char *cmd);
+	case LINUX_REBOOT_CMD_RESTART9: /*set restart flag*/
+		ret = strncpy_from_user(&buffer[0], arg, sizeof(buffer) - 1);
+		if (ret < 0) {
+			ret = -EFAULT;
+			break;
+		}
+		buffer[sizeof(buffer) - 1] = '\0';
+		rk3288_set_restart_flag(buffer);
+		break;
+#endif
 #ifdef CONFIG_KEXEC
 	case LINUX_REBOOT_CMD_KEXEC:
 		ret = kernel_kexec();
