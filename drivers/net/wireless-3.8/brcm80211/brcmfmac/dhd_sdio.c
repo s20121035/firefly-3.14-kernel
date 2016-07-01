@@ -307,7 +307,7 @@ struct rte_console {
 #define BRCMF_IDLE_ACTIVE	0	/* Do not request any SD clock change
 					 * when idle
 					 */
-#define BRCMF_IDLE_INTERVAL	1
+#define BRCMF_IDLE_INTERVAL	0
 
 #define KSO_WAIT_US 50
 #define MAX_KSO_ATTEMPTS (PMU_MAX_TRANSITION_DLY/KSO_WAIT_US)
