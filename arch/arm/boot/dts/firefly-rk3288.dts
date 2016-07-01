@@ -178,18 +178,6 @@
 		regulator-boot-on;
 	};
 
-	/* This turns on vbus for sata */
-	vcc_sata: sata-regulator {
-		compatible = "regulator-fixed";
-		enable-active-high;
-		pinctrl-names = "default";
-		pinctrl-0 = <&sata_reset>;
-		gpio = <&gpio7 12 GPIO_ACTIVE_HIGH>;
-		regulator-name = "sata_pwr";
-		regulator-always-on;
-		regulator-boot-on;
-	};
-
 	/* This turns on vbus for otg for host mode (dwc2) */
 	vcc5v_otg: vcc5v-otg-regulator {
 		compatible = "regulator-fixed";
@@ -200,6 +188,19 @@
 		regulator-name = "vcc5_host2";
 		regulator-always-on;
 		regulator-boot-on;
+	};
+
+    vcc_sd: sdmmc-regulator {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&sdmmc_power_gpio>;
+		gpio = <&gpio7 11 GPIO_ACTIVE_LOW>;
+		regulator-name = "sdmmc_pwr";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+		regulator-boot-on;
+		vin-supply = <&vcc_io>;
 	};
 
 	wifi_regulator: wifi-regulator {
@@ -341,8 +342,19 @@
 	vqmmc-supply = <&vcc_18>;
 };
 
+
 &sdmmc {
-	status = "disabled";
+	bus-width = <4>;
+	cap-mmc-highspeed;
+	cap-sd-highspeed;
+	card-detect-delay = <200>;
+	disable-wp;			/* wp not hooked up */
+	num-slots = <1>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&sdmmc_clk &sdmmc_cmd &sdmmc_cd &sdmmc_bus4>;
+	status = "okay";
+	vmmc-supply = <&vcc_sd>;
+	vqmmc-supply = <&vccio_sd>;
 };
 
 &spi0 {
@@ -781,24 +793,14 @@
 			rockchip,pins = <6 21 RK_FUNC_1 &pcfg_pull_up_drv_8ma>;
 		};
 
-		/*
-		 * Builtin CD line is hooked to ground to prevent JTAG at boot
-		 * (and also to get the voltage rail correct).  Make we
-		 * configure gpio6_C6 as GPIO so dw_mmc builtin CD doesn't
-		 * think there's a card inserted
-		 */
-		sdmmc_cd_disabled: sdmmc-cd-disabled {
-			rockchip,pins = <6 22 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-
-		/* This is where we actually hook up CD */
-		sdmmc_cd_gpio: sdmmc-cd-gpio {
-			rockchip,pins = <7 5 RK_FUNC_GPIO &pcfg_pull_up>;
-		};
-
 		sdmmc_wp_gpio: sdmmc-wp-gpio {
 			rockchip,pins = <7 10 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
+
+        sdmmc_power_gpio: sdmmc-power-gpio {
+			rockchip,pins = <7 11 RK_FUNC_GPIO &pcfg_pull_up>;
+        };
+
 	};
 
 	tpm {
@@ -812,9 +814,6 @@
 			rockchip,pins = <0 14 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 
-		sata_reset: sata-reset {
-			rockchip,pins = <0 13 RK_FUNC_GPIO &pcfg_pull_up>;
-		};
 		usbotg_pwren_h: usbotg-pwren-h {
 			rockchip,pins = <0 12 RK_FUNC_GPIO &pcfg_pull_none>,
 					<7 3 RK_FUNC_GPIO &pcfg_pull_none>;

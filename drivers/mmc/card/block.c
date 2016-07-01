@@ -449,6 +449,28 @@ out:
 	return err;
 }
 
+int mmc_blk_removable(struct gendisk *disk)
+{
+	struct mmc_blk_data *md;
+	struct mmc_card *card;
+
+	md = mmc_blk_get(disk);
+	if (!md) {
+		return -1;
+	}
+
+	card = md->queue.card;
+	if (IS_ERR(card)) {
+        return -1;
+    }
+
+    if( card->host->caps & MMC_CAP_NONREMOVABLE)
+        return 0;
+    else
+        return 1;
+}
+EXPORT_SYMBOL(mmc_blk_removable);
+
 static int mmc_blk_ioctl_cmd(struct block_device *bdev,
 	struct mmc_ioc_cmd __user *ic_ptr)
 {

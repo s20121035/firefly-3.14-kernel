@@ -1,6 +1,7 @@
 #include <linux/kernel.h>
 #include <linux/slab.h>
 #include <linux/bootmem.h>
+#include <linux/major.h>
 #include "check.h"
 #include "rk.h"
 
@@ -291,6 +292,7 @@ static void rkpart_bootmode_fixup(void)
 	saved_command_line = new_command_line;
 }
 
+extern int mmc_blk_removable(struct gendisk *disk);
 int rkpart_partition(struct parsed_partitions *state)
 {
 	int num_parts = 0, i;
@@ -304,8 +306,10 @@ int rkpart_partition(struct parsed_partitions *state)
         if (1 != state->bdev->bd_disk->emmc_disk)
                 return 0;
 #endif
-	if ((179 != MAJOR(state->bdev->bd_dev)))
-            return 0;
+    if ((MMC_BLOCK_MAJOR != MAJOR(state->bdev->bd_dev)))
+        return 0;
+    if (mmc_blk_removable(state->bdev->bd_disk))
+        return 0;
 
         /* Fixme: parameter should be coherence with part table */
 	cmdline = strstr(saved_command_line, "mtdparts=") + 9;
