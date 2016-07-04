@@ -17,6 +17,7 @@
 #include <linux/vmalloc.h>
 #include <linux/ctype.h>
 #include <linux/genhd.h>
+#include <linux/major.h>
 
 #include "check.h"
 
@@ -143,6 +144,7 @@ void free_partitions(struct parsed_partitions *state)
 	kfree(state);
 }
 
+extern int mmc_blk_removable(struct gendisk *disk);
 struct parsed_partitions *
 check_partition(struct gendisk *hd, struct block_device *bdev)
 {
@@ -169,8 +171,10 @@ check_partition(struct gendisk *hd, struct block_device *bdev)
 
 	/* Rockchip partition table ONLY used by eMMC disk */
 	#ifdef CONFIG_RK_PARTITION
-	if ((179 == MAJOR(bdev->bd_dev)))
-		i = sizeof(check_part) / sizeof(struct parsed_partitions *) - 2;
+	if ((MMC_BLOCK_MAJOR == MAJOR(bdev->bd_dev))) {
+        if (!mmc_blk_removable(bdev->bd_disk))
+            i = sizeof(check_part) / sizeof(struct parsed_partitions *) - 2;
+    }
 	#endif
 
 	while (!res && check_part[i]) {
