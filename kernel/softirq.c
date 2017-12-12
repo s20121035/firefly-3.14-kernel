@@ -21,11 +21,13 @@
 #include <linux/freezer.h>
 #include <linux/kthread.h>
 #include <linux/rcupdate.h>
+#include <linux/delay.h>
 #include <linux/ftrace.h>
 #include <linux/smp.h>
 #include <linux/smpboot.h>
 #include <linux/tick.h>
 #include <linux/pm.h>
+#include <linux/locallock.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/irq.h>

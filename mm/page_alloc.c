@@ -62,6 +62,7 @@
 #include <linux/hugetlb.h>
 #include <linux/sched/rt.h>
 #include <linux/low-mem-notify.h>
+#include <linux/locallock.h>
 
 #include <asm/sections.h>
 #include <asm/tlbflush.h>
