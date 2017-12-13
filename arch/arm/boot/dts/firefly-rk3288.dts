@@ -575,6 +575,7 @@
 
 
 &i2c1 {
+    clock-frequency = <200000>;
 	status = "okay";
 };
 
